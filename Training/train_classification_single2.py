@@ -98,7 +98,7 @@ network, init_fn = model_builder.build_model(model_name=args.model, net_input=ne
 loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=network, labels=net_output))
 
 update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) 
-opt = tf.train.AdamOptimizer(learning_rate=0.00001).minimize(loss, var_list=[var for var in tf.trainable_variables()])
+opt = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(loss, var_list=[var for var in tf.trainable_variables()])
 #opt = tf.train.RMSPropOptimizer(learning_rate=0.0001, decay=0.995).minimize(loss, var_list=[var for var in tf.trainable_variables()])
 opt = tf.group([opt, update_ops])
 
@@ -340,6 +340,9 @@ for epoch in range(args.epoch_start_i, args.num_epochs):
         train_time="Remaining training time : Training completed.\n"
     utils.LOG(train_time)
     scores_list = []
+
+    if not os.path.exists(args.statistic_path):
+        os.makedirs(args.statistic_path)
 
     l = len(global_accuracy_per_epoch)
     fig1, ax1 = plt.subplots(figsize=(11, 8))

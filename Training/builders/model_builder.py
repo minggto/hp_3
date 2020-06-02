@@ -5,9 +5,9 @@ import subprocess
 sys.path.append("models")
 from models.FCN import build_fcn
 from models.Unet import build_unet
+from models.tiny_DeepLabV3 import build_deeplabv3
 
-
-SUPPORTED_MODELS = ["FCN", "Unet"]
+SUPPORTED_MODELS = ["FCN", "Unet", "tiny_deeplabv3"]
 
 
 
@@ -24,7 +24,10 @@ def build_model(model_name, net_input, num_classes, crop_width, crop_height, is_
 		network = build_fcn(net_input, preset_model=model_name, num_classes=num_classes)
 	elif model_name == "Unet":
 		network = build_unet(net_input, preset_model=model_name, num_classes=num_classes)
+	elif model_name == "tiny_deeplabv3":
+		network = build_deeplabv3(net_input, preset_model=model_name, num_classes=num_classes)
 	else:
 	    raise ValueError("Error: the model %d is not available. Try checking which models are available using the command python main.py --help")
 
+	print("Finish the model ...")
 	return network, init_fn

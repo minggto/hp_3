@@ -101,12 +101,23 @@ loss2 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=network1, 
 loss = 0.5*loss1+0.5*loss2
 
 update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) 
-opt = tf.train.AdamOptimizer(learning_rate=0.00001).minimize(loss, var_list=[var for var in tf.trainable_variables()])
+opt = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(loss, var_list=[var for var in tf.trainable_variables()])
 #opt = tf.train.RMSPropOptimizer(learning_rate=0.00005, decay=0.995).minimize(loss, var_list=[var for var in tf.trainable_variables()])
 opt = tf.group([opt, update_ops])
 
 saver=tf.train.Saver(max_to_keep=1000)
 sess.run(tf.global_variables_initializer())
+
+ckpt_path = args.ckpt
+model_checkpoint_name = ckpt_path+"/latest_model_" + args.model + "_" + args.dataset + ".ckpt"
+if args.save_first_ckpt:
+    import gc
+    print("Saving the first checkpoint")
+    first_ckpt_path = args.first_ckpt
+    saver.save(sess, first_ckpt_path+"/latest_model_" + args.model + "_" + args.dataset + ".ckpt")
+    gc.collect()
+    exit()
+
 
 utils.count_params()
 
@@ -114,8 +125,7 @@ if init_fn is not None:
     init_fn(sess)
 
 # Load a previous checkpoint if desired
-ckpt_path = args.ckpt
-model_checkpoint_name = ckpt_path+"/latest_model_" + args.model + "_" + args.dataset + ".ckpt"
+
 if args.continue_training:
     print('Loaded latest model checkpoint')
     saver.restore(sess, model_checkpoint_name)
@@ -390,6 +400,8 @@ for epoch in range(args.epoch_start_i, args.num_epochs):
         train_time="Remaining training time : Training completed.\n"
     utils.LOG(train_time)
 
+    if not os.path.exists(args.statistic_path):
+        os.makedirs(args.statistic_path)
 
     l = len(global_accuracy_per_epoch1)
     fig1, ax1 = plt.subplots(figsize=(11, 8))

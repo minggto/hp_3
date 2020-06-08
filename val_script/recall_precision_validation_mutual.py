@@ -53,14 +53,47 @@ def evaluate_mutual_segmentation(gt1, gt2, pred1, pred2, predm):
     return np.array([tp11, fp11, fn11]), np.array([tp21, fp21, fn21]), np.array([tpm1, fpm1, fnm1]), np.array([tp22, fp22, fn22]), np.array([tp12, fp12, fn12]), np.array([tpm2, fpm2, fnm2])
 
 
-ckpt_path1 = '/2_data/share/workspace/yyq/HP-paper-4-tmi/ckpt_path/FCN_1/'
-ckpt_path2 = '/2_data/share/workspace/yym/exp/thesis_hp_3/FCN_single2/'
-ckpt_pathm = '/2_data/share/workspace/yym/exp/thesis_hp_3/FCN_multi/'
+#ckpt_path1 = '/2_data/share/workspace/yyq/HP-paper-4-tmi/ckpt_path/FCN_1/'
+#ckpt_path2 = '/2_data/share/workspace/yym/exp/thesis_hp_3/FCN_single2/'
+#ckpt_pathm = '/2_data/share/workspace/yym/exp/thesis_hp_3/FCN_multi/'
+#statistic_path = './FCN_12m'
 
-statistic_path = './FCN_12m'
+'''
+ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/Unet_single1/'
+ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/Unet_single2/'
+ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/Unet_multi/'
+statistic_path = './statistic_path/Unet_statistic_12m1'
+
+ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/tiny_deeplabv3_single1/'
+ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/tiny_deeplabv3_single2/'
+ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/tiny_deeplabv3_multi/'
+statistic_path = './statistic_path/tiny_deeplabv3_statistic_12m'
+
+ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_single1/'
+ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_single2/'
+ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_multi/'
+statistic_path = './statistic_path/FCN_statistic_12m'
+'''
+
+ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/pspnet_single1/'
+ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/pspnet_single2/'
+ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/pspnet_multi/'
+statistic_path = './statistic_path/pspnet_statistic_12m'
+
+
+
+if not os.path.exists(statistic_path):
+    os.makedirs(statistic_path)
+
+
+
 
 ckpt_dirs = os.listdir(ckpt_path1)
-ckpt_dirs = ckpt_dirs[0:513]
+ckpt_dirs.sort()
+print("---ckpt_dirs---",ckpt_dirs)
+#exit()
+
+ckpt_dirs = ckpt_dirs[1:641]
 
 valid_ckpt_dirs = []
 
@@ -88,11 +121,26 @@ for vcd in valid_ckpt_dirs:
     files = os.listdir(vcdp1)
     gt_images = []
     for f in files:
+        if '_pred' in f:
+            gt_images.append(f)
+    if len(gt_images) == 0:
+        print("---0---",vcdp1)
+        continue
+
+    gtdp1 = os.path.join(ckpt_path1, '0000')
+    gtdp2 = os.path.join(ckpt_path2, '0000')
+    files = os.listdir(gtdp1)
+    gt_images = []
+    for f in files:
         if '_gt' in f:
             gt_images.append(f)
     if len(gt_images) == 0:
-        continue
+        print("error--- 0000 no data")
+        exit()
     
+
+
+
     print(vcdp1)
     print(vcdp2)
     print(vcdpm)
@@ -104,8 +152,8 @@ for vcd in valid_ckpt_dirs:
     all_tff12 = np.array([0,0,0])
     all_tffm2 = np.array([0,0,0])
     for gi in gt_images:
-        gt_img1 = os.path.join(vcdp1, gi)
-        gt_img2 = os.path.join(vcdp2, gi)
+        gt_img1 = os.path.join(gtdp1, gi)
+        gt_img2 = os.path.join(gtdp2, gi)
         pred_img1 = os.path.join(vcdp1, gi.split('gt')[0]+'pred.png')
         pred_img2 = os.path.join(vcdp2, gi.split('gt')[0]+'pred.png')
         pred_imgm = os.path.join(vcdpm, gi.split('gt')[0]+'pred1.png')
@@ -115,8 +163,12 @@ for vcd in valid_ckpt_dirs:
         pred1 = load_image(pred_img1)
         pred2 = load_image(pred_img2)
         predm = load_image(pred_imgm)
-        predm = cv2.cvtColor(predm, cv2.COLOR_BGR2GRAY)
-        
+        #print('gt1',gt1.shape)
+        if len(predm.shape)==3:
+            predm = cv2.cvtColor(predm, cv2.COLOR_BGR2GRAY)
+            #print('predm',predm.shape)
+            
+        #exit()
         tff11, tff21, tffm1, tff22, tff12, tffm2 = evaluate_mutual_segmentation(gt1, gt2, pred1, pred2, predm)
     
         all_tff11 += tff11

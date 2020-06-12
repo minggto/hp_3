@@ -35,7 +35,7 @@ def cal(P,R):
 	# num = np.argmax(f3)
 	# num = np.argmax(R)
 
-	return num,P,R,f1
+	return num,P[num],R[num],f1[num]
 
 def sortmax(nums):
 	import heapq
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
 	statistic_path = ['./statistic_path/FCN_statistic_12m','./statistic_path/Unet_statistic_12m','./statistic_path/tiny_deeplabv3_statistic_12m','./statistic_path/pspnet_statistic_12m','./statistic_path/DANet_statistic_12m']
 	for k in range(len(statistic_path)):
-		TFF, P1, P21, R2, R12 = load_data(statistic_path[k])
+		TFF, P1, P21, R2_t, R12 = load_data(statistic_path[k])
 		P1 = []
 		P21 = []
 		Pm1 = []
@@ -71,9 +71,10 @@ if __name__ == '__main__':
 			P1.append(tffl11[1])
 			P21.append(tffl21[1])
 			Pm1.append(tfflm1[1])
-			R2.append(tffl22[0])
+			# R2.append(tffl22[0])
 			R12.append(tffl12[0])
 			Rm2.append(tfflm2[0])
+			R2.append(R2_t[j])
 
 		rp1 = 1.0-ratio(P1)
 		rp2 = 1.0-ratio(P21)
@@ -84,7 +85,10 @@ if __name__ == '__main__':
 		n1,Pa,Ra,f1a = cal(rp1, rr1)
 		n2,Pb,Rb,f1b = cal(rp2, rr2)
 		nm,Pc,Rc,f1c = cal(rpm, rrm)
-		print(n1,n2,nm,'            ->',n1+441,n2+441,nm+441)
+
+		print(statistic_path[k],n1,n2,nm,'            ->',n1+441,n2+441,nm+441)
+		print("Pa,Ra,f1a",Pa,Ra,f1a)
+		print("Pc,Rc,f1c", Pc,Rc,f1c)
 
 	# for k in range(len(statistic_path)):
 	# 	TFF, P1, P21, R2_t, R12 = load_data(statistic_path[k])

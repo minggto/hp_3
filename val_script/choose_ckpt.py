@@ -27,13 +27,13 @@ def ratio(x1):
 def cal(P,R):
 	P = np.asarray(P)
 	R = np.asarray(R)
-	f1 = P*R/(P+R)
-	num = np.argmax(f1)
-	# f2 = (1+2**2)*P*R/(2**2*P+R)
+	f1 = 2*P*R/(P+R)
+	# num = np.argmax(f1)
+	f2 = (1+2**2)*P*R/(2**2*P+R)
 	# num = np.argmax(f2)
-	# f3 = (1+3**2)*P*R/(3**2*P+R)
+	f3 = (1+3**2)*P*R/(3**2*P+R)
 	# num = np.argmax(f3)
-	# num = np.argmax(R)
+	num = np.argmax(R)
 
 	return num,P[num],R[num],f1[num]
 
@@ -46,6 +46,64 @@ def sortmax(nums):
 	# min_num_index_list = map(nums.index, heapq.nsmallest(3, nums))
 	# print(list(max_num_index_list))
 	return list(max_num_index_list)
+
+
+def plotpic(yr1, yp1,yr2, yp2, yrm, ypm, model):
+	import matplotlib.pyplot as plt
+
+
+	plt.figure(1)
+	plt.subplot(131)
+	plt.title(model)
+	plt.xlabel("ckpt")
+	# plt.ylabel("y")
+	# plt.xlim(xmax=2.1, xmin=0)  # 改变xlim——改变x轴的取值范围
+	# plt.ylim(ymax=1, ymin=0.4)
+	# new_ticks = np.linspace(0, 2.0, 5)
+	# plt.xticks(new_ticks)  # 改变xticks——坐标轴显示和精度
+	# x = [0.05, 0.2, 0.4, 1, 2]
+
+
+	x = list(range(441,641))
+	f1a = 2.0 * yr1 * yp1 / (yr1 + yp1)
+	f1b = 2.0 * yr2 * yp2 / (yr2 + yp2)
+	f1c = 2.0 * yrm * ypm / (yrm + ypm)
+	# b = 4
+	# fb = (1.0 + b) * yr * yp / (yr + b * yp)
+
+	# plt.plot(x, yr, '--^', color='b', label='Recall')
+	# plt.plot(x, yp, '--s', color='g', label='Precision')
+	# plt.plot(x, f1, '--d', color='y', label='F1')
+	# plt.plot(x, fb, '--o', color='r', label='Fβ')
+
+	plt.plot(x, yr1, '--v', color='b', label='single1_recall')
+	plt.plot(x, yr2, '--*', color='m', label='single2_recall')
+	plt.plot(x, yrm, '--d', color='y', label='multi_recall')
+	plt.legend()  # show label
+
+	plt.subplot(132)
+	plt.title(model)
+	plt.xlabel("ckpt")
+	plt.plot(x, yp1, '--v', color='b', label='single1_precision')
+	plt.plot(x, yp2, '--*', color='m', label='single2_precision')
+	plt.plot(x, ypm, '--d', color='y', label='multi_precision')
+	plt.legend()  # show label
+
+	plt.subplot(133)
+	plt.title(model)
+	plt.xlabel("ckpt")
+	plt.plot(x, f1a, '--v', color='b', label='single1_f1')
+	plt.plot(x, f1b, '--*', color='m', label='single2_f1')
+	plt.plot(x, f1c, '--d', color='y', label='multi_f1')
+	# plt.plot(x, TPE_ASPP_f1, '--s', color='k', label='2PE-ASPP F1')
+	# plt.plot(x, THPE_f1, '--^', color='g', label='3PE F1')
+	# plt.plot(x, THPE_ASPP_f1, '--o', color='r', label='3PE-ASPP F1')
+
+	plt.legend()  # show label
+
+	plt.show()
+
+
 
 
 
@@ -76,19 +134,43 @@ if __name__ == '__main__':
 			Rm2.append(tfflm2[0])
 			R2.append(R2_t[j])
 
-		rp1 = 1.0-ratio(P1)
-		rp2 = 1.0-ratio(P21)
-		rpm = 1.0-ratio(Pm1)
-		rr1 = ratio(R2)
-		rr2 = ratio(R12)
-		rrm = ratio(Rm2)
-		n1,Pa,Ra,f1a = cal(rp1, rr1)
-		n2,Pb,Rb,f1b = cal(rp2, rr2)
-		nm,Pc,Rc,f1c = cal(rpm, rrm)
+			pred1 = tffl11[0]+tffl11[1]
+			pred2 = tffl21[0] + tffl21[1]
+			predm = tfflm1[0] + tfflm1[1]
+			label2_pos = tffl12[0]+tffl12[2]
 
-		print(statistic_path[k],n1,n2,nm,'            ->',n1+441,n2+441,nm+441)
-		print("Pa,Ra,f1a",Pa,Ra,f1a)
-		print("Pc,Rc,f1c", Pc,Rc,f1c)
+		# rp1 = 1.0-ratio(P1)
+		# rp2 = 1.0-ratio(P21)
+		# rpm = 1.0-ratio(Pm1)
+		# rr1 = ratio(R12)
+		# rr2 = ratio(R2)
+		# rrm = ratio(Rm2)
+		# n1,Pa,Ra,f1a = cal(rp1, rr1)
+		# n2,Pb,Rb,f1b = cal(rp2, rr2)
+		# nm,Pc,Rc,f1c = cal(rpm, rrm)
+
+		preci1 = 1.0-np.array(P1)/pred1
+		preci2 = 1.0-np.array(P21)/pred2
+		precim = 1.0 - np.array(Pm1) / predm
+		recal1 = np.array(R12)/label2_pos
+		recal2 = np.array(R2) / label2_pos
+		recalm = np.array(Rm2) / label2_pos
+		n1, Pa, Ra, f1a = cal(1.0-np.array(P1)/pred1, np.array(R12)/label2_pos)
+		n2, Pb, Rb, f1b = cal(1.0-np.array(P21)/pred2, np.array(R2)/label2_pos)
+		nm, Pc, Rc, f1c = cal(1.0-np.array(Pm1)/predm, np.array(Rm2)/label2_pos)
+
+		model = (statistic_path[k].split('/')[-1]).split('_')[0]
+		print(model,n1,n2,nm,'            ->',n1+441,n2+441,nm+441)
+		# print("Pa,Ra,f1a",Pa,Ra,f1a)
+		# print("Pb, Rb, f1b", Pb, Rb, f1b)
+		# print("Pc,Rc,f1c", Pc,Rc,f1c)
+
+		# model = (statistic_path[k].split('/')[-1]).split('_')[0]
+		# plotpic(yr1 = recal1, yp1 = preci1,yr2 = recal2 , yp2 = preci2, yrm = recalm, ypm = precim, model = model)
+
+
+
+
 
 	# for k in range(len(statistic_path)):
 	# 	TFF, P1, P21, R2_t, R12 = load_data(statistic_path[k])
@@ -174,10 +256,35 @@ if __name__ == '__main__':
 # 137 169 33             -> 578 610 474
 
 #TOP50-F1
-# 127 169 135             -> 568 610 576
 # 161 173 101             -> 602 614 542
 # 109 127 173             -> 550 568 614
 # 109 173 113             -> 550 614 554
 # 138 5 21             -> 579 446 462
-# 127 169 135             -> 568 610 576
 
+#f1
+# FCN 127 73 101             -> 568 514 (542)
+# Unet 173 21 37             -> 614 462 (478)
+# tiny 133 161 113             -> 574 602 (554)
+# pspnet 199 95 53             -> (640) 536 494
+# DANet 175 131 135             -> 616 572 (576)
+
+##f2
+# FCN 173 23 167             -> 614 464 608
+# Unet 127 91 135             -> 568 532 576
+# tiny 133 59 113             -> (574) 500 (554)
+# pspnet 5 47 53             -> 446 488 (494)
+# DANet 169 75 33             -> 610 516 474
+
+# ##f3
+# FCN 173 23 167             -> (614 464 608)
+# Unet 127 16 135             -> (568) 457 (576)
+# tiny 173 59 113             -> 614 (500 554)
+# pspnet 5 47 53             -> (446 488 494)
+# DANet 169 137 33             -> (610) 578 (474)
+#
+# ##recall
+# FCN 173 23 167             -> 614 464 608
+# Unet 127 16 135             -> 568 457 576
+# tiny 173 59 113             -> 614 500 554
+# pspnet 5 166 53             -> 446 607 494
+# DANet 169 41 33             -> 610 482 474

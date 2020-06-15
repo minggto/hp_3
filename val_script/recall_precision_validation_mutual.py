@@ -73,19 +73,21 @@ ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_single1/'
 ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_single2/'
 ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_multi/'
 statistic_path = './statistic_path/FCN_statistic_12m'
-'''
 
 ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/pspnet_single1/'
 ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/pspnet_single2/'
 ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/pspnet_multi/'
 statistic_path = './statistic_path/pspnet_statistic_12m'
+'''
 
+ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/DANet_single1/'
+ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/DANet_single2/'
+ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/DANet_multi/'
+statistic_path = './statistic_path/DANet_statistic_12m'
 
 
 if not os.path.exists(statistic_path):
     os.makedirs(statistic_path)
-
-
 
 
 ckpt_dirs = os.listdir(ckpt_path1)
@@ -157,13 +159,18 @@ for vcd in valid_ckpt_dirs:
         pred_img1 = os.path.join(vcdp1, gi.split('gt')[0]+'pred.png')
         pred_img2 = os.path.join(vcdp2, gi.split('gt')[0]+'pred.png')
         pred_imgm = os.path.join(vcdpm, gi.split('gt')[0]+'pred1.png')
+        if not os.path.exists(pred_imgm):
+            pred_imgm = os.path.join(vcdpm, gi.split('gt')[0] + 'pred.png')
         
         gt1 = load_image(gt_img1)
         gt2 = load_image(gt_img2)
         pred1 = load_image(pred_img1)
         pred2 = load_image(pred_img2)
         predm = load_image(pred_imgm)
-        #print('gt1',gt1.shape)
+        # print('gt1',gt1.shape)
+        # print('pred1', pred1.shape)
+        # print(pred_imgm)
+        # print('predm', predm.shape)
         if len(predm.shape)==3:
             predm = cv2.cvtColor(predm, cv2.COLOR_BGR2GRAY)
             #print('predm',predm.shape)
@@ -192,7 +199,7 @@ for vcd in valid_ckpt_dirs:
     print(tffl12)
     print(tfflm2)
     
-    TFF.append([tffl11, tffl21, tfflm1, tff22, tffl12, tfflm2])
+    TFF.append([tffl11, tffl21, tfflm1, tffl22, tffl12, tfflm2])
 
     P1.append(tffl11[1])
     P21.append(tffl21[1])

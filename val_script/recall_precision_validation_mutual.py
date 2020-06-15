@@ -231,7 +231,7 @@ for vcd in valid_ckpt_dirs:
 
     import pickle
     f=open(os.path.join(statistic_path,'statistics.pckl'), 'wb')
-    pickle.dump([TFF, P1, P21, Pm1, R2, R12, Rm1], f)
+    pickle.dump([TFF, P1, P21, Pm1, R2, R12, Rm2], f)
     f.close()
   
   

@@ -52,39 +52,44 @@ def evaluate_mutual_segmentation(gt1, gt2, pred1, pred2, predm):
     
     return np.array([tp11, fp11, fn11]), np.array([tp21, fp21, fn21]), np.array([tpm1, fpm1, fnm1]), np.array([tp22, fp22, fn22]), np.array([tp12, fp12, fn12]), np.array([tpm2, fpm2, fnm2])
 
-
-#ckpt_path1 = '/2_data/share/workspace/yyq/HP-paper-4-tmi/ckpt_path/FCN_1/'
-#ckpt_path2 = '/2_data/share/workspace/yym/exp/thesis_hp_3/FCN_single2/'
-#ckpt_pathm = '/2_data/share/workspace/yym/exp/thesis_hp_3/FCN_multi/'
-#statistic_path = './FCN_12m'
-
 '''
+ckpt_path1 = '/2_data/share/workspace/yyq/HP-paper-4-tmi/ckpt_path/FCN_1/'
+ckpt_path2 = '/2_data/share/workspace/yym/exp/thesis_hp_3/FCN_single2/'
+ckpt_pathm = '/2_data/share/workspace/yym/exp/thesis_hp_3/FCN_multi/'
+#statistic_path = './FCN_12m'
+statistic_path = './statistic_path_valid/FCN_statistic_12m'
+
 ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/Unet_single1/'
 ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/Unet_single2/'
 ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/Unet_multi/'
-statistic_path = './statistic_path/Unet_statistic_12m1'
+statistic_path = './statistic_path_valid/Unet_statistic_12m'
 
 ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/tiny_deeplabv3_single1/'
 ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/tiny_deeplabv3_single2/'
 ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/tiny_deeplabv3_multi/'
-statistic_path = './statistic_path/tiny_deeplabv3_statistic_12m'
+statistic_path = './statistic_path_valid/tiny_deeplabv3_statistic_12m'
 
 ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_single1/'
 ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_single2/'
 ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_multi/'
-statistic_path = './statistic_path/FCN_statistic_12m'
+statistic_path = './statistic_path_valid/FCN_statistic_12m'
 
 ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/pspnet_single1/'
 ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/pspnet_single2/'
 ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/pspnet_multi/'
-statistic_path = './statistic_path/pspnet_statistic_12m'
-'''
+statistic_path = './statistic_path_valid/pspnet_statistic_12m'
 
 ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/DANet_single1/'
 ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/DANet_single2/'
 ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/DANet_multi/'
-statistic_path = './statistic_path/DANet_statistic_12m'
+statistic_path = './statistic_path_valid/DANet_statistic_12m'
+'''
 
+
+ckpt_path1 = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_single1/'
+ckpt_path2 = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_single2/'
+ckpt_pathm = '/2_data/yym_workspcae/exp/thesis_hp_3/FCN_multi/'
+statistic_path = './statistic_path_valid/FCN_statistic_12m'
 
 if not os.path.exists(statistic_path):
     os.makedirs(statistic_path)

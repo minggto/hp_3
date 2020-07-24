@@ -235,7 +235,7 @@ def compute_class_accuracies(pred, label, num_classes):
 def compute_mean_iou(pred, label):
 
     unique_labels = np.unique(label)
-    num_unique_labels = len(unique_labels);
+    num_unique_labels = len(unique_labels)
 
     I = np.zeros(num_unique_labels)
     U = np.zeros(num_unique_labels)
@@ -276,7 +276,7 @@ def evaluate_segmentation(pred, label, num_classes, score_averaging="weighted"):
     flat_label = label.flatten()
 
     global_accuracy = compute_global_accuracy(flat_pred, flat_label)
-    class_accuracies = compute_class_accuracies(flat_pred, flat_label, num_classes)
+    # class_accuracies = compute_class_accuracies(flat_pred, flat_label, num_classes)
 
     prec = precision_score(flat_pred, flat_label, pos_label=1, average='binary')#, average=score_averaging)
     rec = recall_score(flat_pred, flat_label, pos_label=1, average='binary')#, average=score_averaging)
@@ -285,7 +285,7 @@ def evaluate_segmentation(pred, label, num_classes, score_averaging="weighted"):
     iou = compute_mean_iou(flat_pred, flat_label)
     class_iou = compute_class_iou(flat_pred, flat_label)
 
-    return global_accuracy, class_accuracies, prec, rec, f1, iou, class_iou
+    return global_accuracy,  prec, rec, f1, iou, class_iou
 
 def evaluate_segmentation_new(pred, label, num_classes):
     flat_pred = pred.flatten()

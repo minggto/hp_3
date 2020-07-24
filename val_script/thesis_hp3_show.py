@@ -88,6 +88,7 @@ def visural(imgfile_i,labfile_i,gtfile_i,visual_path):
     blank_image = img_image * 0
     blank_image[:, :, 0][img_label == 255] = 255
     target1_mask = temp1_image + temp_image * 0.5 + blank_image * 0.5
+    target1_mask = np.array(target1_mask,np.uint8)
     imageio.imwrite(os.path.join(visual_path, prename + '_pred_mask1.png'), target1_mask)
 
 
@@ -109,6 +110,7 @@ def visural(imgfile_i,labfile_i,gtfile_i,visual_path):
     blank_image = img_image * 0
     blank_image[:, :, 0][img_gt > 0] = 255
     target2_mask = temp1_image + temp_image * 0.5 + blank_image * 0.5
+    target2_mask = np.array(target2_mask,np.uint8)
     imageio.imwrite(os.path.join(visual_path, prename + '_takegt_mask.png'), target2_mask)
 
 
@@ -142,16 +144,18 @@ if __name__ == '__main__':
     checkpoint_i = args.checkpoint_i
     num = '%04d' % checkpoint_i
 
-    vec = 'split4096_vec_8'
-    basepath = test_basepath + vec + '/' + imagepath
-    predpath = pred_basepath+ '/' + vec +  '/' + num
-    takegtpath = takegt_basepath + '/' + vec + '_takegt' + '/' + num + '/takegt'
+    vecs = ['split4096_vec_8','split4096_vec_9','split4096_vec_42','split4096_vec_48','split4096_vec_49']
+    for k in range(len(vecs)):
+        vec = vecs[k]
+        basepath = test_basepath + vec + '/' + imagepath
+        predpath = pred_basepath+ '/' + vec +  '/' + num
+        takegtpath = takegt_basepath + '/' + vec + '_takegt' + '/' + num + '/takegt'
 
-    imgfile, labfile, gtfile = inference(basepath, predpath, takegtpath)
+        imgfile, labfile, gtfile = inference(basepath, predpath, takegtpath)
 
-    visual_path = takegt_basepath + '/' + vec + '_visural_target1_target2' + '/' + num
-    if not os.path.exists(visual_path):
-        os.makedirs(visual_path)
+        visual_path = takegt_basepath + '/' + vec + '_visural_target1_target2' + '/' + num
+        if not os.path.exists(visual_path):
+            os.makedirs(visual_path)
 
-    for i in range(len(imgfile)):
-        visural(imgfile[i], labfile[i], gtfile[i], visual_path)
+        for i in range(len(imgfile)):
+            visural(imgfile[i], labfile[i], gtfile[i], visual_path)

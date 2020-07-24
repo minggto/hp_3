@@ -30,6 +30,7 @@ parser.add_argument('--ckpt', type=str, default="", help='ckpt save path.')
 parser.add_argument('--crop_height', type=int, default=512, help='Height of cropped input image to network')
 parser.add_argument('--crop_width', type=int, default=512, help='Width of cropped input image to network')
 parser.add_argument('--model', type=str, default="FCN", help='The model you are using. See model_builder.py for supported models')
+parser.add_argument('--checkpoint_i', type=int, default=639, help='checkpoint_i')
 
 args = parser.parse_args()
 os.environ['CUDA_VISIBLE_DEVICES']=args.gpu
@@ -80,20 +81,31 @@ class HpInference:
 
 		# 写直接预测二值化图
 		image_name = os.path.basename(image_path)
+		# fname, fename = os.path.split(path)
+		prename, postfix = os.path.splitext(image_name)
 		label = np.asarray(post_temp, dtype=np.uint8)
-		label_img = copy.copy(label)
-		# label_img[:, :, 0][label == 1] = 0
-		label_img[:, :][label == 1] = 255
-		# label_img[:, :, 2][label == 1] = 0
-		label_img[:, :][label == 0] = 0
-		binary_label = label_img
+		# label_img = copy.copy(label)*0
+		# label_img[:, :][label == 1] = 255
+		# label_img[:, :][label == 0] = 0
+		# binary_label = label_img
+		binary_label = label*255
+		r, binary_label = cv2.threshold(binary_label, 100, 255, cv2.THRESH_BINARY)
+
+		# import pandas as pd
+		# comp_pd = pd.DataFrame(binary_label)
+		# result = comp_pd.apply(pd.value_counts)
+		# array_result = np.array(result.index)
+		# result = np.sum(result, axis=1)
+		# print("array_result",array_result)
+		# print("result",result)
+
 
 		num = '%04d' % checkpoint_i
 		if not os.path.exists(visual_path):
 			os.makedirs(visual_path)
 		if not os.path.exists(visual_path + '/' + num):
 			os.makedirs(visual_path + '/' + num)
-		imageio.imwrite(os.path.join(visual_path + '/' + num, image_name), binary_label)
+		cv2.imwrite(os.path.join(visual_path + '/' + num, prename+'.png'), binary_label)
 
 
 
@@ -185,14 +197,21 @@ if __name__ == '__main__':
 	print("network",network.shape)
 
 
-	for checkpoint_i in range(1, 641, 2):
-		restore_model(sess, checkpoint_i)
-		print("finish restore_saver ", checkpoint_i)
+	# for checkpoint_i in range(639, 641, 2):
+	# 	restore_model(sess, checkpoint_i)
+	# 	print("finish restore_saver ", checkpoint_i)
+	#
+	# 	for j in range(len(dirs)):
+	# 		basepath = test_basepath + dirs[j] + '/' + imagepath
+	# 		visualpath = visual_basepath +  '/' + dirs[j]
+	# 		inference(basepath, visualpath, checkpoint_i, sess, network, net_input)
 
-		for j in range(len(dirs)):
-			basepath = test_basepath + dirs[j] + '/' + imagepath
-			visualpath = visual_basepath +  '/' + dirs[j]
-			inference(basepath, visualpath, checkpoint_i, sess, network, net_input)
+	checkpoint_i = args.checkpoint_i
+	restore_model(sess, checkpoint_i)
+	print("finish restore_saver ", checkpoint_i)
 
-
+	for j in range(len(dirs)):
+		basepath = test_basepath + dirs[j] + '/' + imagepath
+		visualpath = visual_basepath +  '/' + dirs[j]
+		inference(basepath, visualpath, checkpoint_i, sess, network, net_input)
 

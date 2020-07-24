@@ -18,41 +18,11 @@ from skimage import io,data,color,morphology,feature,measure
 import argparse
 
 
-def calc_sigt(I,threshval):
-    M,N = I.shape
-    ulim = np.uint8(np.max(I))
-    N1 = np.count_nonzero(I>threshval)
-    N2 = np.count_nonzero(I<=threshval)
-    # w1 = np.float64(N1)/(M*N)
-    # w2 = np.float64(N2)/(M*N)
-    w1 = np.float64(N1)/np.float64(N1+N2)
-    w2 = np.float64(N2)/np.float64(N1+N2)
-    #print N1,N2,w1,w2
-    try:
-        u1 = np.sum(i*np.count_nonzero(np.multiply(I>i-0.5,I<=i+0.5))/N1 for i in range(threshval+1,ulim))
-        u2 = np.sum(i*np.count_nonzero(np.multiply(I>i-0.5,I<=i+0.5))/N2 for i in range(threshval+1))
-        uT = u1*w1+u2*w2
-        sigt = w1*w2*(u1-u2)**2
-        #print u1,u2,uT,sigt
-    except:
-        return 0
-    return sigt
+
 
 #...........................................................................................
 
-def get_threshold(I):
-    max_sigt = 0
-    opt_t = 0
-    ulim = np.uint8(np.max(I))
-    print(ulim)
-    for t in range(ulim+1):
-        sigt = calc_sigt(I,t)
-        #print t, sigt
-        if sigt > max_sigt:
-            max_sigt = sigt
-            opt_t = t
-    print ('optimal high threshold: ',opt_t)
-    return opt_t
+
 
 
 def canny_threshold(img_temp):
@@ -60,7 +30,7 @@ def canny_threshold(img_temp):
     ala = img_temp * 0
     ala[img_temp < max_th] = 1
     vis_ala = ala * img_temp
-    print("vis_ala:max", np.max(vis_ala))
+    # print("vis_ala:max", np.max(vis_ala))
     count_list = []
     img_list = []
     for i in range(1, max_th):
@@ -70,7 +40,7 @@ def canny_threshold(img_temp):
         count_list.append(count)
         # for j in range(count):
         #     img_list.append(i)
-    print('count_list', count_list)
+    # print('count_list', count_list)
     # mu_0, sigma_0 = data_analysis(img_list, 5, 111)
     # print("mu_0,sigma_0", mu_0, sigma_0)
 
@@ -104,8 +74,8 @@ def data_analysis(x,  width, subplot_num):
     x = np.array(x)
     mu =np.mean(x) #计算均值
     sigma =np.std(x)
-    print("mu",mu)
-    print("sigma",sigma)
+    # print("mu",mu)
+    # print("sigma",sigma)
 
     plt.subplot(subplot_num)
     #num_bins = 100 #直方图柱子的数量
@@ -113,9 +83,9 @@ def data_analysis(x,  width, subplot_num):
     # n, bins, patches = plt.hist(x, num_bins, facecolor='blue', alpha=0.5)
     num_bins = np.arange(0, np.max(x)+5, width)
     n, bins, patches = plt.hist(x, num_bins,  facecolor='blue')
-    print("bins",bins,len(bins))
-    print("n",n,len(n))
-    print("sum(n)",sum(n))
+    # print("bins",bins,len(bins))
+    # print("n",n,len(n))
+    # print("sum(n)",sum(n))
     #直方图函数，x为x轴的值，normed=1表示为概率密度，即和为一，绿色方块，色深参数0.5.返回n个概率，直方块左边线的x值，及各个方块对象
     # y = mlab.normpdf(bins, mu, sigma)#拟合一条最佳正态分布曲线y
     #
@@ -145,8 +115,8 @@ class HpInference:
         label_temp[label_temp >0] = 1
 
         # 先进行图像闭运算，之后连通区域标记，删除其中小面积区域
-        # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-        # pos_mask_close = cv2.morphologyEx(pos_mask, cv2.MORPH_CLOSE, kernel)
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+        label_temp = cv2.morphologyEx(label_temp, cv2.MORPH_CLOSE, kernel)
 
 
         groudtruth,img_temp,chull_image,gt_image = self.findgroudtruth(label_temp,image_path,visual_path)
@@ -310,22 +280,22 @@ class HpInference:
         imageio.imwrite(os.path.join(visual_path+'/takegt', image_name.split('.jpg')[0] + '.png'), label)
   
         
-        if not os.path.exists(visual_path+'/dilat9'):
-            os.makedirs(visual_path+'/dilat9')
-        kernel = np.ones((3,3),np.uint8)
-        dilation = cv2.dilate(label,kernel,iterations = 3) #膨胀
-        dilat_groudtruth = dilation
-        imageio.imwrite(os.path.join(visual_path+'/dilat9', image_name.split('.jpg')[0] + '.png'), dilat_groudtruth)
-        
-
-
-        if not os.path.exists(visual_path + '/visrualChull'):
-            os.makedirs(visual_path + '/visrualChull')
-        imageio.imwrite(os.path.join(visual_path + '/visrualChull', image_name.split('.jpg')[0] + '.png'), chull_image)
-
-        if not os.path.exists(visual_path + '/visrualgt'):
-            os.makedirs(visual_path + '/visrualgt')
-        imageio.imwrite(os.path.join(visual_path + '/visrualgt', image_name.split('.jpg')[0] + '.png'), gt_image)
+        # if not os.path.exists(visual_path+'/dilat9'):
+        #     os.makedirs(visual_path+'/dilat9')
+        # kernel = np.ones((3,3),np.uint8)
+        # dilation = cv2.dilate(label,kernel,iterations = 3) #膨胀
+        # dilat_groudtruth = dilation
+        # imageio.imwrite(os.path.join(visual_path+'/dilat9', image_name.split('.jpg')[0] + '.png'), dilat_groudtruth)
+        #
+        #
+        #
+        # if not os.path.exists(visual_path + '/visrualChull'):
+        #     os.makedirs(visual_path + '/visrualChull')
+        # imageio.imwrite(os.path.join(visual_path + '/visrualChull', image_name.split('.jpg')[0] + '.png'), chull_image)
+        #
+        # if not os.path.exists(visual_path + '/visrualgt'):
+        #     os.makedirs(visual_path + '/visrualgt')
+        # imageio.imwrite(os.path.join(visual_path + '/visrualgt', image_name.split('.jpg')[0] + '.png'), gt_image)
 
 
 
@@ -339,24 +309,24 @@ def inference(basepath,basepath_pred,basepath_takegt):
     pngfile=[]
     for i in range(len(jpgfile)):
         fname, fename = os.path.split(jpgfile[i])
-        pfile = basepath_pred + '/' + fename
+        prename, postfix = os.path.splitext(fename)
+        pfile = basepath_pred + '/' + prename + '.png'
         pngfile.append(pfile)
 
-    print("inference_files",jpgfile[0],pngfile[0])
+    # print("inference_files",jpgfile[0],pngfile[0])
 
     hp_inference = HpInference()
     for i in range(len(jpgfile)):
         file_path=jpgfile[i]
-        print("jpgfile[i]",i,jpgfile[i])
+        # print("jpgfile[i]",i,jpgfile[i])
         label_path=pngfile[i]
         hp_inference.predict(image_path=file_path, label_path=label_path, visual_path = basepath_takegt, is_vis=True)
 
 
 
 parser = argparse.ArgumentParser()
-
 parser.add_argument('--model_task', type=str, default="FCN_multi", help='model_task name.')
-
+parser.add_argument('--checkpoint_i', type=int, default=639, help='checkpoint_i')
 args = parser.parse_args()
 
 
@@ -375,12 +345,19 @@ if __name__ == '__main__':
         if not os.path.exists(fatherpath):
             pass
         else:
-            for checkpoint_i in range(639, 641, 2):
-                num = '%04d' % checkpoint_i
-                basepath = fatherpath + '/' + imagepath
-                basepath_pred = fatherpath_pred+ '/' + num
-                basepath_takegt = fatherpath_takegt + '/' + num
+            # for checkpoint_i in range(639, 641, 2):
+            #     num = '%04d' % checkpoint_i
+            #     basepath = fatherpath + '/' + imagepath
+            #     basepath_pred = fatherpath_pred+ '/' + num
+            #     basepath_takegt = fatherpath_takegt + '/' + num
+            #
+            #     inference(basepath,basepath_pred,basepath_takegt)
 
-                inference(basepath,basepath_pred,basepath_takegt)
-
+            checkpoint_i = args.checkpoint_i
+            num = '%04d' % checkpoint_i
+            basepath = fatherpath + '/' + imagepath
+            basepath_pred = fatherpath_pred+ '/' + num
+            basepath_takegt = fatherpath_takegt + '/' + num
+            print("take_groundtruth_loop.py",args.model_task,num,'split4096_vec_{}'.format(i))
+            inference(basepath,basepath_pred,basepath_takegt)
 

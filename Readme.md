@@ -6,7 +6,8 @@ Yiming Yang, email:minggto@foxmail.com
 Yongquan Yang
 
 
-数据集：
+（1）数据集：
+《增加一个由标注到label1和label2的脚本》
 训练集路径
  '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset_512'
 image、label1和label2目录：'image_512' , 'label_512_dilat' , 'groundtruth_512_erode'
@@ -19,13 +20,14 @@ image、label1和label2目录：'image_512' , 'label_512' ,  'groundtruth_512'
 根据数据集中图像name生成pkl的路径
 '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/dataname_pkl_512/'
 
+（2）训练：
+《新增训练过程中保存的ckpt路径》
 
-
-测试：
-
+（3）验证
 验证集预测mask：
 /2_data/yym_workspcae/workspace/thesis/hp_3/github/hp_3/Training/
 valid_pred_mask.sh
+《增加验证预测结果路径》
 
 在验证集不同ckpt上计算recall和precision：
 /2_data/yym_workspcae/workspace/thesis/hp_3/github/hp_3/val_script/
@@ -57,38 +59,33 @@ run: python val_script/choose_ckpt.py
 # pspnet 5 47 53             -> (446 488 494)
 # DANet 169 137 33             -> (610) 578 (474)
 
-
-
-
+（4）测试
 根据选择的ckpt，在测试集上预测mask：
 /2_data/yym_workspcae/workspace/thesis/hp_3/github/hp_3/Training/
 test_pred_mask.sh
-
-
+《增加测试预测结果路径》
 
 根据测试集上预测mask，没有后处理，直接提取groundtruth（HP）：
 /2_data/yym_workspcae/workspace/thesis/hp_3/github/hp_3/test/
 take_groundtruth_loop.sh
+《增加中间结果路径》
 
 根据测试集上预测mask，增加后处理:选择性膨胀等操作，提取pred_groundtruth（HP）：
 /2_data/yym_workspcae/workspace/thesis/hp_3/github/hp_3/test/
 take_post_groundtruth_loop.sh
+《增加中间结果路径》
 
 根据测试集上预测mask，增加后处理:膨胀等操作，提取pred_groundtruth（HP）(实验指标低，不建议采用)：
 /2_data/yym_workspcae/workspace/thesis/hp_3/github/hp_3/test/
 take_post1_groundtruth_loop.sh
+《增加中间结果路径》
 
 根据提取的pred_groundtruth与标签groundtruth计算所有测试集上的指标：
 /2_data/yym_workspcae/workspace/thesis/hp_3/github/hp_3/Training/
 test_post_metrix_count.sh
+《增加中间结果路径》
 
-
-
-
-
-
-
-可视化：
+（5）可视化
 
 在'/2_data/share/workspace/yym/HP/hp3_visural/ShowData/Polygon and Targets/'目录下中形成的可视化图片，少量的：
 /2_data/yym_workspcae/workspace/thesis/hp_3/github/hp_3/val_script/

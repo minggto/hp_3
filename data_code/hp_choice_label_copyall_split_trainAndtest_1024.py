@@ -137,22 +137,22 @@ def inference(old_imagepath,old_labelpath,train_imagepath,train_labelpath,test_i
 
 
 
-imagepath='image_512'
-labelpath='label_512'
-groundtruthpath='groundtruth_512'
-groundtruthpath_dilat='groundtruth_512_dilat'
+imagepath='image_1024'
+labelpath='label_1024'
+groundtruthpath='groundtruth_1024'
+groundtruthpath_dilat='groundtruth_1024_dilat_2'
 
-labelpath2='label_512_dilat'
-groundtruthpath2='groundtruth_512_erode'
+labelpath2='label_1024_dilat'
+groundtruthpath2='groundtruth_1024_erode'
 
 
 if __name__ == '__main__':
     for i in range(0,70):
 
-        fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset_1_new_512_filter/split4096_vec_' + str(i)
+        fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/train_dataset_1_new/split4096_vec_' + str(i)
 
-        train_fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset_512/split4096_vec_' + str(i)
-        test_fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/valid_dataset_512/split4096_vec_' + str(i)
+        train_fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset/split4096_vec_' + str(i)
+        test_fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/valid_dataset/split4096_vec_' + str(i)
 
         if os.path.exists(fatherpath):
             old_imagepath = fatherpath+'/'+imagepath

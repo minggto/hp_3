@@ -1,6 +1,6 @@
 import os
 
-#os.environ["CUDA_VISIBLE_DEVICES"] = "5"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 import cv2
 import time
@@ -15,7 +15,7 @@ from skimage.measure import label
 from PIL import Image, ImageDraw, ImageFont
 from skimage import io,data,color,morphology,feature,measure
 import shutil
-import random
+
 
 
 class HpInference:
@@ -25,15 +25,13 @@ class HpInference:
 
 
     def predict(self, label_path, image_path, new_image_path, new_label_path):
-        '''
         label = imageio.imread(label_path)
         #对连通区域标记
         label=label//255
         sum_area=np.sum(label)
-        if sum_area > 2000: 
+        if sum_area > 100:
             self.copyfile(label_path, image_path, new_image_path, new_label_path)
-        '''
-        self.copyfile(label_path, image_path, new_image_path, new_label_path)
+           
 
     
     def copyfile(self, label_path, image_path, new_image_path,new_label_path):
@@ -55,7 +53,6 @@ class HpInference:
         #     os.makedirs(new_groundtruth_path)
         # shutil.copyfile(old_groundtruthpath,new_groundtruth_path+'/'+groundtruth_name)
 
-
         temp_name = label_name
         old_temppath = label_path.split(labelpath)[0]+groundtruthpath+'/'+temp_name
         new_temp_path = new_label_path.split(labelpath)[0]+groundtruthpath
@@ -64,26 +61,19 @@ class HpInference:
         shutil.copyfile(old_temppath,new_temp_path+'/'+temp_name)
 
         temp_name = label_name
-        old_temppath = label_path.split(labelpath)[0]+groundtruthpath_dilat+'/'+temp_name
-        new_temp_path = new_label_path.split(labelpath)[0]+groundtruthpath_dilat
-        if not os.path.exists(new_temp_path):
-            os.makedirs(new_temp_path)
-        shutil.copyfile(old_temppath,new_temp_path+'/'+temp_name)
-
-
-        temp_name = label_name
-        old_temppath = label_path.split(labelpath)[0]+labelpath2+'/'+temp_name
-        new_temp_path = new_label_path.split(labelpath)[0]+labelpath2
+        old_temppath = label_path.split(labelpath)[0]+labelpath_dilat+'/'+temp_name
+        new_temp_path = new_label_path.split(labelpath)[0]+labelpath_dilat
         if not os.path.exists(new_temp_path):
             os.makedirs(new_temp_path)
         shutil.copyfile(old_temppath,new_temp_path+'/'+temp_name)
 
         temp_name = label_name
-        old_temppath = label_path.split(labelpath)[0]+groundtruthpath2+'/'+temp_name
-        new_temp_path = new_label_path.split(labelpath)[0]+groundtruthpath2
+        old_temppath = label_path.split(labelpath)[0]+groundtruthpath_erode+'/'+temp_name
+        new_temp_path = new_label_path.split(labelpath)[0]+groundtruthpath_erode
         if not os.path.exists(new_temp_path):
             os.makedirs(new_temp_path)
         shutil.copyfile(old_temppath,new_temp_path+'/'+temp_name)
+
 
 
 
@@ -107,11 +97,10 @@ def find(path):
 
 
 
-def inference(old_imagepath,old_labelpath,train_imagepath,train_labelpath,test_imagepath,test_labelpath):
+def inference(old_imagepath,old_labelpath,new_imagepath,new_labelpath):
     inference_path = old_imagepath
     inference_files = glob(os.path.join(inference_path, '*.jpg'))
     jpgfile=inference_files
-    random.shuffle(jpgfile)
 
     pngfile=[]
     for i in range(len(jpgfile)):
@@ -121,49 +110,34 @@ def inference(old_imagepath,old_labelpath,train_imagepath,train_labelpath,test_i
     print("inference_files",jpgfile[0],pngfile[0])
     
     hp_inference = HpInference()
-    length=len(jpgfile)*1//10
-    for i in range(0,length):
+    for i in range(len(jpgfile)):
         file_path=jpgfile[i]
         print("jpgfile[i]",i,jpgfile[i])
         label_path=pngfile[i]
-        hp_inference.predict(image_path=file_path, label_path=label_path, new_image_path=test_imagepath, new_label_path=test_labelpath)
-
-    for i in range(length,len(jpgfile)):
-        file_path=jpgfile[i]
-        print("jpgfile[i]",i,jpgfile[i])
-        label_path=pngfile[i]
-        hp_inference.predict(image_path=file_path, label_path=label_path, new_image_path=train_imagepath, new_label_path=train_labelpath)
-
-
+        hp_inference.predict(image_path=file_path, label_path=label_path, new_image_path=new_imagepath, new_label_path=new_labelpath)
 
 
 imagepath='image_512'
 labelpath='label_512'
 groundtruthpath='groundtruth_512'
-groundtruthpath_dilat='groundtruth_512_dilat'
 
-labelpath2='label_512_dilat'
-groundtruthpath2='groundtruth_512_erode'
+labelpath_dilat='label_512_dilat'
+groundtruthpath_erode='groundtruth_512_erode'
+
 
 
 if __name__ == '__main__':
-    for i in range(0,70):
 
-        fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset_1_new_512_filter/split4096_vec_' + str(i)
+    for i in range(1,70):
 
-        train_fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset_512/split4096_vec_' + str(i)
-        test_fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/valid_dataset_512/split4096_vec_' + str(i)
+        fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset_1_new_512/split4096_vec_'+str(i)
+        new_fatherpath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset_1_new_512_filter/split4096_vec_'+str(i)
 
         if os.path.exists(fatherpath):
             old_imagepath = fatherpath+'/'+imagepath
             old_labelpath = fatherpath+'/'+labelpath
-            # old_labeldilatpath= fatherpath + '/' + labeldilatpath
-            train_imagepath = train_fatherpath+'/'+imagepath
-            train_labelpath = train_fatherpath+'/'+labelpath
-            # train_labeldilatpath = train_fatherpath + '/' + labeldilatpath
-            test_imagepath = test_fatherpath+'/'+imagepath
-            test_labelpath = test_fatherpath+'/'+labelpath
-            # test_labeldilatpath = test_fatherpath + '/' + labeldilatpath
-            inference(old_imagepath,old_labelpath,train_imagepath,train_labelpath,test_imagepath,test_labelpath)
+            new_imagepath = new_fatherpath+'/'+imagepath
+            new_labelpath = new_fatherpath+'/'+labelpath
+            inference(old_imagepath,old_labelpath,new_imagepath,new_labelpath)
         else:
             pass

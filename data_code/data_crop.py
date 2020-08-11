@@ -94,37 +94,80 @@ def find(path,labelpath):
 		return -1
 
 
-def all_filenames(basepath,labelpath_gt,labelpath,random_flag):
+def all_filenames(basepath,labelpath_gt,labelpath,labelpath_gt2,labelpath2,random_flag):
 	jpgfile = all_path(basepath)
 	if random_flag:
 		random.shuffle(jpgfile)  # shuffle trainset filenames
 
 	pngfile = []
 	pngfile_1 = []
+	pngfile_2 = []
+	pngfile_3 = []
 
 	train_num = len(jpgfile)
 	print("train_num", train_num)
-	all_filenames = jpgfile
+	# all_filenames = jpgfile
 
 	for i in range(len(jpgfile)):
 		pfile, ppath = find(jpgfile[i], labelpath=labelpath_gt)
 		pngfile.append(pfile)
-	all_filenames_png = pngfile
-
-	x_train_filenames = all_filenames
-	y_train_filenames = all_filenames_png
+	# all_filenames_png = pngfile
 
 	for i in range(len(jpgfile)):
 		pfile1, ppath1 = find(jpgfile[i], labelpath=labelpath)
 		pngfile_1.append(pfile1)
 
+	for i in range(len(jpgfile)):
+		pfile, ppath = find(jpgfile[i], labelpath=labelpath_gt2)
+		pngfile_2.append(pfile)
+
+	for i in range(len(jpgfile)):
+		pfile1, ppath1 = find(jpgfile[i], labelpath=labelpath2)
+		pngfile_3.append(pfile1)
+
+
+	x_train_filenames = jpgfile
+	y_train_filenames = pngfile
 	y1_train_filenames = pngfile_1
-	return x_train_filenames,y_train_filenames,y1_train_filenames
+	y2_train_filenames = pngfile_2
+	y3_train_filenames = pngfile_3
+
+	return x_train_filenames,y_train_filenames,y1_train_filenames,y2_train_filenames,y3_train_filenames
 
 
 if __name__ == '__main__':
 
+	basepath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/train_dataset_1_new'
 
+	labelpath = 'label_1024'
+	labelpath_gt = 'groundtruth_1024'
+
+	labelpath_dilat = 'label_1024_dilat'
+	labelpath_gt_erode = 'groundtruth_1024_erode'
+
+	random_flag = False
+	x_train_filenames, y_train_filenames, y1_train_filenames,y2_train_filenames,y3_train_filenames = all_filenames(basepath, labelpath_gt, labelpath,labelpath_gt_erode, labelpath_dilat,
+																			 random_flag)
+
+	newbasepath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset_1_new_512'
+	newimagepath = 'image_512'
+
+	newlabelpath = 'label_512'
+	newlabelpath_gt = 'groundtruth_512'
+
+	newlabelpath_dilat = 'label_512_dilat'
+	newlabelpath_gt_erode = 'groundtruth_512_erode'
+
+	crop_jpg_png(x_train_filenames, basepath, newbasepath, imagepath, newimagepath)
+	crop_jpg_png(y_train_filenames, basepath, newbasepath, labelpath_gt, newlabelpath_gt)
+	crop_jpg_png(y1_train_filenames, basepath, newbasepath, labelpath, newlabelpath)
+
+	crop_jpg_png(y2_train_filenames, basepath, newbasepath, labelpath_gt_erode, newlabelpath_gt_erode)
+	crop_jpg_png(y3_train_filenames, basepath, newbasepath, labelpath_dilat, newlabelpath_dilat)
+
+
+
+	'''
 	basepath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset'
 	labelpath = 'label_1024_dilat'
 	labelpath_gt = 'groundtruth_1024_erode'
@@ -136,10 +179,12 @@ if __name__ == '__main__':
 	newlabelpath = 'label_512_dilat'
 	newlabelpath_gt = 'groundtruth_512_erode'
 	newimagepath = 'image_512'
-	# crop_jpg_png(x_train_filenames, basepath, newbasepath, imagepath, newimagepath)
-	# crop_jpg_png(y_train_filenames, basepath, newbasepath, labelpath_gt, newlabelpath_gt)
-	# crop_jpg_png(y1_train_filenames, basepath, newbasepath, labelpath, newlabelpath)
+	crop_jpg_png(x_train_filenames, basepath, newbasepath, imagepath, newimagepath)
+	crop_jpg_png(y_train_filenames, basepath, newbasepath, labelpath_gt, newlabelpath_gt)
+	crop_jpg_png(y1_train_filenames, basepath, newbasepath, labelpath, newlabelpath)
+	'''
 
+	'''
 	basepath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/test_dataset'
 	labelpath = 'label_1024'
 	labelpath_gt = 'groundtruth_1024'
@@ -153,9 +198,9 @@ if __name__ == '__main__':
 	crop_jpg_png(x_test_filenames, basepath, newbasepath, imagepath, newimagepath)
 	crop_jpg_png(y_test_filenames, basepath, newbasepath, labelpath_gt, newlabelpath_gt)
 	crop_jpg_png(y1_test_filenames, basepath, newbasepath, labelpath, newlabelpath)
+	'''
 
-
-
+	'''
 	basepath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/valid_dataset'
 	labelpath = 'label_1024_dilat'
 	labelpath_gt = 'groundtruth_1024_erode'
@@ -169,3 +214,4 @@ if __name__ == '__main__':
 	crop_jpg_png(x_valid_filenames, basepath, newbasepath, imagepath, newimagepath)
 	crop_jpg_png(y_valid_filenames, basepath, newbasepath, labelpath_gt, newlabelpath_gt)
 	crop_jpg_png(y1_valid_filenames, basepath, newbasepath, labelpath, newlabelpath)
+	'''

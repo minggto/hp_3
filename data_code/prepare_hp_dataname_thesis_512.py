@@ -115,10 +115,17 @@ def all_filenames(basepath,labelpath_gt,labelpath,random_flag):
 
 if __name__ == '__main__':
     basepath = '/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/train_dataset_512'
-    labelpath = 'label_512_dilat'
-    labelpath_gt = 'groundtruth_512_erode'
+    labelpath = 'label_512'
+    labelpath_gt = 'groundtruth_512_dilat'
     random_flag = True
     x_train_filenames,y_train_filenames,y1_train_filenames = all_filenames(basepath, labelpath_gt, labelpath, random_flag)
+
+
+    basepath='/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/valid_dataset_512'
+    labelpath = 'label_512'
+    labelpath_gt = 'groundtruth_512_dilat'
+    random = False
+    x_valid_filenames,y_valid_filenames,y1_valid_filenames = all_filenames(basepath, labelpath_gt, labelpath, random)
 
 
     basepath='/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/test_dataset_512'
@@ -127,13 +134,6 @@ if __name__ == '__main__':
     random = False
     x_test_filenames,y_test_filenames,y1_test_filenames = all_filenames(basepath, labelpath_gt, labelpath, random)
 
-    basepath='/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/valid_dataset_512'
-    labelpath = 'label_512_dilat'
-    labelpath_gt = 'groundtruth_512_erode'
-    random = False
-    x_valid_filenames,y_valid_filenames,y1_valid_filenames = all_filenames(basepath, labelpath_gt, labelpath, random)
-
-
 
     print(len(x_train_filenames),len(x_test_filenames),len(x_valid_filenames))
     print(len(y_train_filenames), len(y_test_filenames), len(y_valid_filenames))
@@ -141,7 +141,7 @@ if __name__ == '__main__':
 
     
     print("Saving the data numpy pickle to the disk..")
-    pkl_path='/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/dataname_pkl_512/'
+    pkl_path='/2_data/share/workspace/yym/HP/hp_thesis_3_canny/dataset/dataname_pkl_512_fix/'
     if not os.path.exists(pkl_path):
         os.makedirs(pkl_path)
 

@@ -56,7 +56,7 @@ class HpInference:
 		#                                                             'inputs/Training_flag:0': False})
 		# output_image = self.sess.run('logits/BiasAdd:0', feed_dict={'Placeholder:0': image})
 
-		output_image = self.sess.run(network, feed_dict={net_input: image})
+		output_image = self.sess.run(network, feed_dict={net_input: image/255.0})
 
 		output_image = np.array(output_image[0, :, :, :])
 		# print("output_image",output_image.shape)
